@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>WEEDWOLF // WEEDCLOUD</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- BACKGROUND -->
+    <div class="grid-bg">
+        <div class="grid-floor"></div>
+        <div class="horizon"></div>
+    </div>
+
+    <div class="scanlines"></div>
+
+
+    <!-- PAGE -->
+    <main class="weedwolf-page">
+
+        <!-- TITLE -->
+        <header class="weedwolf-header">
+            <h1>theBigBudWolf</h1>
+            <div class="weedwolf-line"></div>
+        </header>
+
+
+        <!-- MAIN TWO-COLUMN LAYOUT -->
+        <section class="weedwolf-layout">
+
+            <!-- LEFT: TALL PORTRAIT -->
+            <div class="weedwolf-portrait">
+                <img
+                    src="assets/weedwolf-portrait.png"
+                    alt="WeedWolf2"
+                >
+            </div>
+
+
+            <!-- RIGHT TOP: BIO -->
+            <div class="weedwolf-bio">
+
+                <div class="bio-label">
+                    THE WOLF IN THE CLOUD
+                </div>
+
+                <h2>theBigBudWolf</h2>
+
+                <p>
+                    More than a character. More than a Producer, DJ, MC, Entrepreneur, Cannaseur. theBigBudWolf is a creator, guide, and culture-driven presence
+                    inside the WeedCloud. Part music, part creativity, part
+                    curiosity, he explores the connection between growing,
+                    learning, art, and the sounds that bring people together.
+                </p>
+
+                <p>
+                    The WeedCloud is a place for ideas, knowledge, music, and
+                    responsible exploration.
+                </p>
+
+            </div>
+
+
+            <!-- RIGHT BOTTOM: TALL LOGO -->
+            <div class="weedwolf-logo-panel">
+                <section class="weedwolf-video-panel">
+
+  <div class="weedwolf-video-header">
+    <h2>WEEDWOLF TV</h2>
+    <p>Music, culture, grow tips and more</p>
+  </div>
+
+  <div class="weedwolf-video-carousel">
+
+    <button class="video-arrow" id="video-prev" type="button">
+      ‹
+    </button>
+
+    <div class="weedwolf-video-pages">
+
+      <div class="weedwolf-video-page active">
+        <div class="weedwolf-video-card">
+          <iframe
+            src="https://www.youtube.com/embed/VIDEO_ID_1"
+            title="WeedWolf Video 1"
+            allowfullscreen>
+          </iframe>
+          <h3>theBigBudWolf</h3>
+        </div>
+      </div>
+
+      <div class="weedwolf-video-page">
+        <div class="weedwolf-video-card">
+          <iframe
+            src="https://www.youtube.com/embed/VIDEO_ID_2"
+            title="WeedWolf Video 2"
+            allowfullscreen>
+          </iframe>
+          <h3>HigherEX - THE BIGBUDWOLF</h3>
+        </div>
+      </div>
+
+      <div class="weedwolf-video-page">
+        <div class="weedwolf-video-card">
+          <iframe
+            src="https://www.youtube.com/embed/VIDEO_ID_3"
+            title="WeedWolf Video 3"
+            allowfullscreen>
+          </iframe>
+          <h3>HigherEX - ISLE OF WEED</h3>
+        </div>
+      </div>
+
+      <div class="weedwolf-video-page">
+        <div class="weedwolf-video-card">
+          <iframe
+            src="https://www.youtube.com/embed/VIDEO_ID_4"
+            title="WeedWolf Video 4"
+            allowfullscreen>
+          </iframe>
+          <h3>theWildCore - SMOKE FILLED ROOM</h3>
+        </div>
+      </div>
+
+      <div class="weedwolf-video-page">
+        <div class="weedwolf-video-card">
+          <iframe
+            src="https://www.youtube.com/embed/VIDEO_ID_5"
+            title="WeedWolf Video 5"
+            allowfullscreen>
+          </iframe>
+          <h3>theBigBudWolf LIVE: 420 DJ SET</h3>
+        </div>
+      </div>
+
+<div class="weedwolf-video-page">
+  <div class="weedwolf-video-card">
+    <iframe
+      src="https://www.youtube.com/embed/VIDEO_ID_6"
+      title="WeedWolf Video 6"
+      allowfullscreen>
+    </iframe>
+    <h3>VIDEO TITLE 6</h3>
+  </div>
+</div>
+      
+    </div>
+
+    <button class="video-arrow" id="video-next" type="button">
+      ›
+    </button>
+
+  </div>
+
+  <div class="weedwolf-video-dots">
+    <button class="video-dot active" data-page="0" type="button"></button>
+    <button class="video-dot" data-page="1" type="button"></button>
+    <button class="video-dot" data-page="2" type="button"></button>
+    <button class="video-dot" data-page="3" type="button"></button>
+    <button class="video-dot" data-page="4" type="button"></button>
+    <button class="video-dot" data-page="5" type="button"></button>
+  </div>
+
+</section>
+
+
+            <!-- FLOATING CLICKABLE TIPS -->
+            <div class="weedwolf-tips">
+
+                <div class="tips-text">
+                    <span class="tips-label">WOLFWIRE</span>
+                    <span id="tips-message">
+                        Click the arrow for a WeedWolf tip.
+                    </span>
+                </div>
+
+                <button
+                    id="tips-next"
+                    class="tips-button"
+                    type="button"
+                    aria-label="Show next WeedWolf tip"
+                >
+                    &gt;
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- WEEDCLOUD LOGO -->
+        <div class="weedcloud-logo-bottom">
+            <img
+                src="assets/weedcloud-logo.png"
+                alt="WeedCloud logo"
+            >
+        </div>
+
+
+        <!-- NAVIGATION -->
+        <nav class="weedwolf-navigation">
+
+            <a href="music.html">MUSIC LOUNGE</a>
+
+            <a href="grow-guide.html">GROW GUIDE</a>
+
+            <a href="index.html">WEEDCLOUD</a>
+
+        </nav>
+
+    </main>
+
+
+    <script src="weedwolf.js"></script>
+
+</body>
+</html>
+
+ <!-- FOOTER -->
+        <footer class="site-footer">
+
+            <div>
+                WILDCORE WEEDCLOUD
+            </div>
+
+            <div class="footer-links">
+
+                <a href="#">⇧ BACK TO START ⇧ </a>
+
+            </div>
+
+            <div class="copyright">
+                © 2026 FreshNeverStale 
+            </div>
+
+        </footer>
+
