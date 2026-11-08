@@ -1797,8 +1797,8 @@ body {
 .hero {
     position: relative;
     width: 100%;
-    min-height: 170px;
-    padding: 25px;
+    min-height: 85px;
+    padding: 12px 20px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1813,7 +1813,7 @@ body {
     bottom: auto;
     width: min(700px, 95%);
     max-width: 700px;
-    padding: 22px 26px;
+    padding: 10px 18px;
     background: rgba(3, 12, 3, 0.95);
     border: 2px solid var(--lime);
     color: #e5f5df;
@@ -1849,7 +1849,7 @@ body {
 
 .message-prompt {
     display: block;
-    margin-top: 16px;
+    margin-top: 6px;
     color: var(--lime);
     font-size: 12px;
     letter-spacing: 2px;
