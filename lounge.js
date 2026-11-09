@@ -17,6 +17,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const copy = document.getElementById("lounge-detail-copy");
   const note = document.getElementById("lounge-detail-note");
   const status = document.getElementById("lounge-status");
+  const linkWall = document.getElementById("lounge-link-wall");
+  const arcadeGrid = document.getElementById("lounge-arcade-grid");
+  const arcadeScreen = document.getElementById("lounge-arcade-screen");
 
   // PLAYER ELEMENTS
   const player = document.getElementById("stereo-player");
@@ -36,12 +39,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ROOM HOTSPOTS
   const areas = {
-    table: {
+    couch: {
       x: 39, y: 69, zoom: 2.25,
-      kicker: "INTERACTIVE DISCOVERY",
-      title: "THE COFFEE TABLE",
-      copy: "Take a closer look around the table. Individual objects and their interactive details will live here.",
-      note: "OVERHEAD TABLE EXPERIENCE · IN DEVELOPMENT"
+      kicker: "LOUNGE COMFORT",
+      title: "THE COUCH",
+      copy: "Take a closer look around the lounge seating area.",
+      note: "COUCH AREA"
+    },
+
+    shoutouts: {
+      x: 10, y: 28, zoom: 2.15,
+      kicker: "PROJECTS · COLLABORATORS · FRIENDS",
+      title: "SHOUT OUTS",
+      copy: "A link wall celebrating projects, collaborators and related sites.",
+      note: "MORE LOGOS AND LINKS CAN BE ADDED OVER TIME"
+    },
+
+    arcade: {
+      x: 33, y: 43, zoom: 2.15,
+      kicker: "WEEDCLOUD ARCADE",
+      title: "SELECT YOUR GAME",
+      copy: "Select a cabinet to enter its game. More arcade titles can be added as they are released.",
+      note: "PRESS START · SELECT YOUR GAME"
     },
 
     stereo: {
@@ -76,6 +95,62 @@ document.addEventListener("DOMContentLoaded", () => {
       note: "COMING SOON"
     }
   };
+
+  // =======================================================
+  // ARCADE GAME CATALOG
+  // Add future games by adding another object to this list.
+  // =======================================================
+  const arcadeGames = [
+    { id: "wolf-tokin", title: "WOLF TOKIN'", image: "assets/wolftokincab.png", status: "coming-soon", page: "" },
+    { id: "alien-kush", title: "ALIEN KUSH", image: "assets/alienkushcab.png", status: "playable", page: "alien-kush.html" },
+    { id: "bud-wolf", title: "BUD-WOLF", image: "assets/budwolfcab.png", status: "playable", page: "bud-wolf.html" },
+    { id: "rolling-table", title: "THE ROLLING TABLE", image: "assets/rollingtablecab.png", status: "coming-soon", page: "" }
+  ];
+
+  function buildArcadeSelection() {
+    if (!arcadeGrid) return;
+    arcadeGrid.innerHTML = "";
+
+    arcadeGames.forEach((game) => {
+      const card = document.createElement(game.status === "playable" ? "a" : "article");
+      card.className = `lounge-game-card ${game.status === "playable" ? "is-playable" : "is-coming-soon"}`;
+      card.dataset.game = game.id;
+
+      if (game.status === "playable") {
+        card.href = game.page;
+        card.setAttribute("aria-label", `Play ${game.title}`);
+      } else {
+        card.setAttribute("aria-label", `${game.title}, coming soon`);
+        card.setAttribute("aria-disabled", "true");
+      }
+
+      const art = document.createElement("div");
+      art.className = "lounge-game-art";
+
+      const imageElement = document.createElement("img");
+      imageElement.src = game.image;
+      imageElement.alt = `${game.title} arcade cabinet`;
+      imageElement.loading = "lazy";
+      imageElement.draggable = false;
+      art.appendChild(imageElement);
+
+      const info = document.createElement("div");
+      info.className = "lounge-game-info";
+
+      const gameTitle = document.createElement("h3");
+      gameTitle.textContent = game.title;
+
+      const badge = document.createElement("span");
+      badge.className = `game-status ${game.status === "playable" ? "game-status-ready" : ""}`;
+      badge.textContent = game.status === "playable" ? "PLAY NOW" : "COMING SOON";
+
+      info.append(gameTitle, badge);
+      card.append(art, info);
+      arcadeGrid.appendChild(card);
+    });
+  }
+
+  buildArcadeSelection();
 
   // MUSIC LIBRARY
   const tracks = Array.from({ length: 9 }, (_, index) => ({
@@ -262,15 +337,28 @@ document.addEventListener("DOMContentLoaded", () => {
     copy.textContent = area.copy;
     note.textContent = area.note;
 
-    // Only display the player inside the stereo area.
-    // Hiding it does NOT stop the music.
-    if (player) {
-      player.hidden = key !== "stereo";
+    // Show only the content belonging to the selected room area.
+    // Hiding the stereo player does NOT stop the music.
+    if (player) player.hidden = key !== "stereo";
+    if (linkWall) linkWall.hidden = key !== "shoutouts";
+
+    if (key === "arcade") {
+      // The room zoom runs first; the arcade selection then fades in.
+      detail.hidden = true;
+      if (arcadeScreen) {
+        arcadeScreen.hidden = false;
+        arcadeScreen.classList.remove("arcade-screen-visible");
+        window.setTimeout(() => arcadeScreen.classList.add("arcade-screen-visible"), 1150);
+      }
+    } else {
+      if (arcadeScreen) {
+        arcadeScreen.hidden = true;
+        arcadeScreen.classList.remove("arcade-screen-visible");
+      }
+      detail.hidden = false;
     }
 
-    detail.hidden = false;
     returnButton.hidden = false;
-
     status.textContent = `AREA SELECTED · ${area.title}`;
   }
 
@@ -282,6 +370,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     detail.hidden = true;
     returnButton.hidden = true;
+
+    if (arcadeScreen) {
+      arcadeScreen.hidden = true;
+      arcadeScreen.classList.remove("arcade-screen-visible");
+    }
 
     // Music deliberately continues playing.
     status.textContent = "TRANSMISSION READY · SELECT A HOTSPOT";
@@ -313,7 +406,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // MISSING IMAGE WARNING
   image.addEventListener("error", () => {
-    status.textContent = "IMAGE NOT FOUND · CHECK lounge-room.png";
+    status.textContent = "IMAGE NOT FOUND · CHECK assets/lounge-room.png";
     stage.classList.add("lounge-image-missing");
   });
 });
