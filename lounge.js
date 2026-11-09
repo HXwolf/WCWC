@@ -114,9 +114,11 @@ document.addEventListener("DOMContentLoaded", () => {
       card.className = `lounge-game-card ${game.status === "playable" ? "is-playable" : "is-coming-soon"}`;
 
       if (game.status === "playable") {
-        card.href = game.page;
-        card.setAttribute("aria-label", `Play ${game.title}`);
-      } else {
+  card.href = game.page;
+  card.target = "_blank";
+  card.rel = "noopener noreferrer";
+  card.setAttribute("aria-label", `Play ${game.title} in a new window`);
+} else {
         card.setAttribute("aria-label", `${game.title}, coming soon`);
         card.setAttribute("aria-disabled", "true");
       }
