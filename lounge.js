@@ -59,8 +59,8 @@ document.addEventListener("DOMContentLoaded", () => {
       x: 33, y: 43, zoom: 2.15,
       kicker: "WEEDCLOUD ARCADE",
       title: "SELECT YOUR GAME",
-      copy: "Select a cabinet to enter its game. More arcade titles can be added as they are released.",
-      note: "PRESS START · SELECT YOUR GAME"
+      copy: "Choose a game from the arcade. Each playable title will open on its own page.",
+      note: "TWO GAMES READY · TWO MORE COMING SOON"
     },
 
     stereo: {
@@ -96,15 +96,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  // =======================================================
   // ARCADE GAME CATALOG
-  // Add future games by adding another object to this list.
-  // =======================================================
+  // Add future games here. Playable games open their own HTML pages.
   const arcadeGames = [
-    { id: "wolf-tokin", title: "WOLF TOKIN'", image: "assets/wolftokincab.png", status: "coming-soon", page: "" },
-    { id: "alien-kush", title: "ALIEN KUSH", image: "assets/alienkushcab.png", status: "playable", page: "alien-kush.html" },
-    { id: "bud-wolf", title: "BUD-WOLF", image: "assets/budwolfcab.png", status: "playable", page: "bud-wolf.html" },
-    { id: "rolling-table", title: "THE ROLLING TABLE", image: "assets/rollingtablecab.png", status: "coming-soon", page: "" }
+    { title: "WOLF TOKIN'", image: "assets/wolftokincab.png", status: "coming-soon", page: "" },
+    { title: "ALIEN KUSH", image: "assets/alienkushcab.png", status: "playable", page: "alien-kush.html" },
+    { title: "BUD-WOLF", image: "assets/budwolfcab.png", status: "playable", page: "bud-wolf.html" },
+    { title: "THE ROLLING TABLE", image: "assets/rollingtablecab.png", status: "coming-soon", page: "" }
   ];
 
   function buildArcadeSelection() {
@@ -114,7 +112,6 @@ document.addEventListener("DOMContentLoaded", () => {
     arcadeGames.forEach((game) => {
       const card = document.createElement(game.status === "playable" ? "a" : "article");
       card.className = `lounge-game-card ${game.status === "playable" ? "is-playable" : "is-coming-soon"}`;
-      card.dataset.game = game.id;
 
       if (game.status === "playable") {
         card.href = game.page;
@@ -126,25 +123,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const art = document.createElement("div");
       art.className = "lounge-game-art";
-
-      const imageElement = document.createElement("img");
-      imageElement.src = game.image;
-      imageElement.alt = `${game.title} arcade cabinet`;
-      imageElement.loading = "lazy";
-      imageElement.draggable = false;
-      art.appendChild(imageElement);
+      const img = document.createElement("img");
+      img.src = game.image;
+      img.alt = `${game.title} arcade cabinet`;
+      img.loading = "lazy";
+      img.draggable = false;
+      art.appendChild(img);
 
       const info = document.createElement("div");
       info.className = "lounge-game-info";
-
-      const gameTitle = document.createElement("h3");
-      gameTitle.textContent = game.title;
-
+      const heading = document.createElement("h3");
+      heading.textContent = game.title;
       const badge = document.createElement("span");
       badge.className = `game-status ${game.status === "playable" ? "game-status-ready" : ""}`;
       badge.textContent = game.status === "playable" ? "PLAY NOW" : "COMING SOON";
-
-      info.append(gameTitle, badge);
+      info.append(heading, badge);
       card.append(art, info);
       arcadeGrid.appendChild(card);
     });
@@ -312,7 +305,6 @@ document.addEventListener("DOMContentLoaded", () => {
       status.textContent = `TRACK FILE NOT FOUND · ${tracks[currentTrack].src}`;
     });
   }
-
   // OPEN A ROOM AREA
   function openArea(key) {
     const area = areas[key];
@@ -342,14 +334,11 @@ document.addEventListener("DOMContentLoaded", () => {
     if (player) player.hidden = key !== "stereo";
     if (linkWall) linkWall.hidden = key !== "shoutouts";
 
-    if (key === "arcade") {
-      // The room zoom runs first; the arcade selection then fades in.
+    if (key === "arcade" && arcadeScreen) {
       detail.hidden = true;
-      if (arcadeScreen) {
-        arcadeScreen.hidden = false;
-        arcadeScreen.classList.remove("arcade-screen-visible");
-        window.setTimeout(() => arcadeScreen.classList.add("arcade-screen-visible"), 1150);
-      }
+      arcadeScreen.hidden = false;
+      arcadeScreen.classList.remove("arcade-screen-visible");
+      window.setTimeout(() => arcadeScreen.classList.add("arcade-screen-visible"), 1150);
     } else {
       if (arcadeScreen) {
         arcadeScreen.hidden = true;
