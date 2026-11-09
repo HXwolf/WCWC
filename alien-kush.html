@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Alien Kush: Werewolf Chronicles</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            background: #06020f;
+            color: #00FF66;
+            font-family: 'Impact', 'Arial Black', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        h1 {
+            margin: 10px 0 5px 0;
+            font-size: 2.2rem;
+            text-align: center;
+            letter-spacing: 2px;
+            color: #00FF66;
+            text-shadow: 0 0 10px #00FF66, 0 0 20px #8A2BE2;
+        }
+
+        /* HUD Styling */
+        #hud {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            max-width: 500px;
+            background: rgba(138, 43, 226, 0.15);
+            border: 2px solid #8A2BE2;
+            border-radius: 8px;
+            padding: 8px;
+            font-size: 1rem;
+            font-family: monospace;
+            box-shadow: 0 0 15px rgba(0, 255, 102, 0.1);
+            margin-bottom: 5px;
+        }
+        .hud-item {
+            text-align: center;
+        }
+        .hud-val {
+            color: #fff;
+            font-weight: bold;
+            display: block;
+            font-size: 1.2rem;
+        }
+        #powerup-alert {
+            color: #ff0055;
+            font-weight: bold;
+            text-shadow: 0 0 8px #ff0055;
+            min-height: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        /* Main Game Arena Box */
+        #game-arena {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            height: min(55vh, 560px);
+            min-height: 280px;
+            background: linear-gradient(180deg, #0d0022 0%, #050012 100%);
+            border: 4px solid #8A2BE2;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 0 25px rgba(138, 43, 226, 0.3);
+        }
+
+        /* Game Entities */
+        #werewolf {
+            position: absolute;
+            bottom: 10px;
+            left: 225px; /* Center start */
+            width: 50px;
+            height: 50px;
+            font-size: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.05s linear;
+            z-index: 10;
+        }
+        .shield-active #werewolf::after {
+            content: "🛡️";
+            position: absolute;
+            font-size: 55px;
+            top: -5px;
+            left: -3px;
+            opacity: 0.6;
+            animation: pulse 0.5s infinite alternate;
+        }
+        @keyframes pulse {
+            from { transform: scale(0.95); }
+            to { transform: scale(1.05); }
+        }
+
+        .entity {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            font-size: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform: translate(-50%, -50%);
+        }
+
+        .projectile {
+            position: absolute;
+            width: 6px;
+            height: 20px;
+            background: #ff0055;
+            border-radius: 3px;
+            box-shadow: 0 0 8px #ff0055, 0 0 15px #8A2BE2;
+        }
+
+        /* Mobile Controls Layout */
+        #controls-container {
+            display: flex;
+            width: 100%;
+            max-width: 500px;
+            gap: 15px;
+            padding: 10px;
+            margin-top: auto;
+            margin-bottom: 15px;
+        }
+        .control-group {
+            display: flex;
+            flex: 1;
+            gap: 10px;
+        }
+        .btn {
+            flex: 1;
+            height: 65px;
+            background: linear-gradient(135deg, #2c004d 0%, #16002b 100%);
+            border: 2px solid #8A2BE2;
+            border-radius: 12px;
+            color: #00FF66;
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 0 #0f0022;
+            cursor: pointer;
+            touch-action: manipulation;
+        }
+        .btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 #0f0022;
+            background: #3d0066;
+            border-color: #00FF66;
+        }
+        #btn-fire {
+            color: #ff0055;
+            border-color: #ff0055;
+        }
+
+        /* Overlays */
+        .overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(5, 0, 15, 0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            text-align: center;
+            padding: 20px;
+        }
+        .overlay h2 {
+            font-size: 2.5rem;
+            color: #ff0055;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px #ff0055;
+        }
+        #game-tools {
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 14px;
+            margin: 3px 0;
+            font: 0.78rem monospace;
+            color: #d8c2ff;
+        }
+        #pause-btn {
+            padding: 7px 20px;
+            background: #21003b;
+            border: 2px solid #8A2BE2;
+            border-radius: 7px;
+            color: #00FF66;
+            font: bold 0.85rem monospace;
+            cursor: pointer;
+            touch-action: manipulation;
+        }
+        #pause-btn:disabled { opacity: 0.45; cursor: default; }
+        #pause-btn:focus-visible, #resume-btn:focus-visible,
+        #save-score-btn:focus-visible, #player-name:focus-visible {
+            outline: 2px solid white;
+            outline-offset: 3px;
+        }
+        #high-score strong { color: #fff; }
+        #score-entry {
+            display: none;
+            width: 100%;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            margin: 4px 0 12px;
+        }
+        #player-name {
+            width: min(220px, 90%);
+            padding: 9px;
+            border: 2px solid #8A2BE2;
+            border-radius: 6px;
+            background: #160022;
+            color: white;
+            font: 0.95rem monospace;
+            text-align: center;
+            user-select: text;
+        }
+        #save-score-btn {
+            padding: 9px 18px;
+            background: #00FF66;
+            color: #000;
+            border: 0;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        #score-save-message {
+            min-height: 16px;
+            color: #00FF66;
+            font: 0.72rem monospace;
+        }
+        .start-btn {
+            padding: 12px 30px;
+            font-size: 1.5rem;
+            background: #00FF66;
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 0 15px #00FF66;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>👽 ALIEN KUSH 🐺</h1>
+
+    <div id="hud">
+        <div class="hud-item">SCORE<span id="score" class="hud-val">0</span></div>
+        <div class="hud-item">LIVES<span id="lives" class="hud-val">3</span></div>
+        <div class="hud-item">WOLF HP<span id="hp" class="hud-val">100</span></div>
+        <div class="hud-item">BUDS<span id="buds" class="hud-val">0/5</span></div>
+    </div>
+
+    <div id="game-tools">
+        <button id="pause-btn" type="button" disabled>PAUSE</button>
+        <div id="high-score">HIGH SCORE: <strong id="high-score-name">---</strong> · <strong id="high-score-value">0</strong></div>
+    </div>
+    <div id="powerup-alert"></div>
+
+    <!-- Main Game Window Container -->
+    <div id="game-arena">
+        <div id="werewolf">🐺</div>
+
+        <!-- Start/Game Over Screens inside the arena context -->
+        <div id="start-screen" class="overlay">
+            <h2>WEREWOLF VS ALIEN WEED</h2>
+            <p style="color: #bbb; font-family: monospace; font-size: 0.9rem; margin-bottom: 20px;">
+                Dodge or shoot Alien Leaves. Collect Green Buds. Shield to protect your lives at the cost of HP!
+            </p>
+            <button class="start-btn" onclick="startGame()">SPARK UP / START</button>
+        </div>
+
+        <div id="pause-screen" class="overlay" style="display: none;">
+            <h2>TRANSMISSION PAUSED</h2>
+            <p style="color:#bbb; font-family:monospace;">The action is on hold.</p>
+            <button class="start-btn" id="resume-btn">RESUME GAME</button>
+        </div>
+
+        <div id="gameover-screen" class="overlay" style="display: none;">
+            <h2>WASTED</h2>
+            <p style="color: #fff; font-size: 1.2rem; margin-bottom: 12px;" id="final-score">Final Score: 0</p>
+            <div id="score-entry">
+                <p style="color:#00FF66; font: bold .85rem monospace;">NEW HIGH SCORE! ENTER YOUR NAME</p>
+                <input id="player-name" type="text" maxlength="18" placeholder="PLAYER NAME" autocomplete="nickname">
+                <button id="save-score-btn" type="button">SAVE HIGH SCORE</button>
+                <p id="score-save-message" aria-live="polite"></p>
+            </div>
+            <button class="start-btn" style="background-color: #ff0055; box-shadow: 0 0 15px #ff0055;" onclick="startGame()">RUN IT BACK</button>
+        </div>
+    </div>
+
+    <!-- Mobile Button Inputs Dashboard -->
+    <div id="controls-container">
+        <div class="control-group">
+            <div class="btn" id="btn-left">◀</div>
+            <div class="btn" id="btn-right">▶</div>
+        </div>
+        <div class="control-group">
+            <div class="btn" id="btn-shield">🛡️</div>
+            <div class="btn" id="btn-fire">🔥</div>
+        </div>
+    </div>
+
+<script>
+'use strict';
+
+const arena = document.getElementById('game-arena');
+const wolfElement = document.getElementById('werewolf');
+const scoreElement = document.getElementById('score');
+const livesElement = document.getElementById('lives');
+const hpElement = document.getElementById('hp');
+const budsElement = document.getElementById('buds');
+const alertElement = document.getElementById('powerup-alert');
+const startScreen = document.getElementById('start-screen');
+const gameoverScreen = document.getElementById('gameover-screen');
+const finalScoreElement = document.getElementById('final-score');
+const pauseButton = document.getElementById('pause-btn');
+const pauseScreen = document.getElementById('pause-screen');
+const scoreEntry = document.getElementById('score-entry');
+const playerNameInput = document.getElementById('player-name');
+const scoreSaveMessage = document.getElementById('score-save-message');
+const HIGH_SCORE_STORAGE_KEY = 'alienKushWerewolfChroniclesHighScore';
+
+function readHighScore() {
+    try {
+        const stored = localStorage.getItem(HIGH_SCORE_STORAGE_KEY);
+        if (!stored) return { name: '---', score: 0 };
+        const record = JSON.parse(stored);
+        if (!record || !Number.isFinite(Number(record.score))) return { name: '---', score: 0 };
+        return {
+            name: String(record.name || 'PLAYER').slice(0, 18),
+            score: Math.max(0, Math.floor(Number(record.score)))
+        };
+    } catch (error) {
+        return { name: '---', score: 0 };
+    }
+}
+
+let highScoreRecord = readHighScore();
+
+function updateHighScoreDisplay() {
+    document.getElementById('high-score-name').textContent = highScoreRecord.name;
+    document.getElementById('high-score-value').textContent = String(highScoreRecord.score);
+}
+
+function saveHighScore() {
+    const name = playerNameInput.value.trim().slice(0, 18) || 'PLAYER';
+    try {
+        localStorage.setItem(HIGH_SCORE_STORAGE_KEY, JSON.stringify({ name, score }));
+        highScoreRecord = { name, score };
+        updateHighScoreDisplay();
+        scoreSaveMessage.textContent = 'HIGH SCORE SAVED!';
+        scoreEntry.style.display = 'none';
+    } catch (error) {
+        scoreSaveMessage.textContent = 'Browser storage unavailable. Score not saved.';
+    }
+}
+
+let arenaWidth = arena.clientWidth;
+let arenaHeight = arena.clientHeight;
+let score = 0;
+let lives = 3;
+let hp = 100;
+let buds = 0;
+let isPowerUp = false;
+let powerUpTime = 0;
+let isPlaying = false;
+let isPaused = false;
+let isShielding = false;
+let wolfX = 0;
+let activeKeys = Object.create(null);
+let touchLeft = false;
+let touchRight = false;
+let projectilesList = [];
+let hazardsList = [];
+let spawnInterval = null;
+let masterLoopId = null;
+let lastFrameTime = 0;
+let fireCooldown = 0;
+
+const wolfWidth = 45;
+const wolfHeight = 45;
+const playerSpeed = 360; // pixels per second
+const projectileSpeed = 540;
+
+function updateArenaSize() {
+    arenaWidth = arena.clientWidth;
+    arenaHeight = arena.clientHeight;
+    wolfX = Math.max(0, Math.min(wolfX, arenaWidth - wolfWidth));
+    wolfElement.style.left = `${wolfX}px`;
+    wolfElement.style.bottom = '10px';
+}
+window.addEventListener('resize', updateArenaSize);
+
+window.addEventListener('keydown', (event) => {
+    if ((event.key === 'p' || event.key === 'P' || event.key === 'Escape') && isPlaying) {
+        event.preventDefault();
+        if (isPaused) resumeGame(); else pauseGame();
+        return;
+    }
+    if (isPaused) return;
+    if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', ' '].includes(event.key)) {
+        event.preventDefault();
+    }
+    activeKeys[event.key] = true;
+    if ((event.key === 'ArrowUp' || event.key === ' ') && !event.repeat) execFire();
+    if (event.key === 'ArrowDown') setShield(true);
+});
+window.addEventListener('keyup', (event) => {
+    activeKeys[event.key] = false;
+    if (event.key === 'ArrowDown') setShield(false);
+});
+window.addEventListener('blur', () => {
+    clearHeldControls();
+    if (isPlaying && !isPaused) pauseGame();
+});
+
+function setupHoldButton(id, callback) {
+    const el = document.getElementById(id);
+    const release = (event) => {
+        if (event) event.preventDefault();
+        callback(false);
+    };
+    el.addEventListener('pointerdown', (event) => {
+        event.preventDefault();
+        callback(true);
+        if (el.setPointerCapture) el.setPointerCapture(event.pointerId);
+    });
+    el.addEventListener('pointerup', release);
+    el.addEventListener('pointercancel', release);
+    el.addEventListener('lostpointercapture', () => callback(false));
+    el.addEventListener('contextmenu', (event) => event.preventDefault());
+}
+setupHoldButton('btn-left', value => touchLeft = value);
+setupHoldButton('btn-right', value => touchRight = value);
+setupHoldButton('btn-shield', setShield);
+const fireButton = document.getElementById('btn-fire');
+fireButton.addEventListener('pointerdown', (event) => {
+    event.preventDefault();
+    execFire();
+});
+fireButton.addEventListener('contextmenu', event => event.preventDefault());
+
+function setShield(active) {
+    isShielding = Boolean(active) && isPlaying && !isPaused;
+    arena.classList.toggle('shield-active', isShielding);
+}
+
+function createDomElement(className, text = '') {
+    const element = document.createElement('div');
+    element.className = className;
+    if (text) element.textContent = text;
+    arena.appendChild(element);
+    return element;
+}
+
+function execFire() {
+    if (!isPlaying || isPaused) return;
+    projectilesList.push({
+        x: wolfX + wolfWidth / 2,
+        y: arenaHeight - 65,
+        element: createDomElement('projectile')
+    });
+}
+
+function startGame() {
+    clearInterval(spawnInterval);
+    if (masterLoopId !== null) cancelAnimationFrame(masterLoopId);
+    document.querySelectorAll('.projectile, .entity').forEach(element => element.remove());
+    projectilesList = [];
+    hazardsList = [];
+    score = 0;
+    lives = 3;
+    hp = 100;
+    buds = 0;
+    isPowerUp = false;
+    powerUpTime = 0;
+    fireCooldown = 0;
+    activeKeys = Object.create(null);
+    touchLeft = false;
+    touchRight = false;
+    isShielding = false;
+    arena.classList.remove('shield-active');
+    updateArenaSize();
+    wolfX = arenaWidth / 2 - wolfWidth / 2;
+    wolfElement.style.left = `${wolfX}px`;
+    updateHudDisplay();
+    alertElement.textContent = '';
+    startScreen.style.display = 'none';
+    gameoverScreen.style.display = 'none';
+    isPlaying = true;
+    isPaused = false;
+    pauseScreen.style.display = 'none';
+    pauseButton.textContent = 'PAUSE';
+    pauseButton.disabled = false;
+    scoreEntry.style.display = 'none';
+    scoreSaveMessage.textContent = '';
+    lastFrameTime = 0;
+    spawnInterval = setInterval(generateObjects, 900);
+    masterLoopId = requestAnimationFrame(engineLoop);
+}
+
+function clearHeldControls() {
+    activeKeys = Object.create(null);
+    touchLeft = false;
+    touchRight = false;
+    isShielding = false;
+    arena.classList.remove('shield-active');
+}
+
+function pauseGame() {
+    if (!isPlaying || isPaused) return;
+    isPaused = true;
+    clearInterval(spawnInterval);
+    spawnInterval = null;
+    if (masterLoopId !== null) cancelAnimationFrame(masterLoopId);
+    masterLoopId = null;
+    clearHeldControls();
+    pauseScreen.style.display = 'flex';
+    pauseButton.textContent = 'RESUME';
+}
+
+function resumeGame() {
+    if (!isPlaying || !isPaused) return;
+    isPaused = false;
+    pauseScreen.style.display = 'none';
+    pauseButton.textContent = 'PAUSE';
+    lastFrameTime = 0;
+    spawnInterval = setInterval(generateObjects, 900);
+    masterLoopId = requestAnimationFrame(engineLoop);
+}
+
+pauseButton.addEventListener('click', () => {
+    if (isPaused) resumeGame(); else pauseGame();
+});
+document.getElementById('resume-btn').addEventListener('click', resumeGame);
+document.getElementById('save-score-btn').addEventListener('click', saveHighScore);
+playerNameInput.addEventListener('keydown', event => {
+    if (event.key === 'Enter') saveHighScore();
+});
+
+function generateObjects() {
+    if (!isPlaying || isPaused) return;
+
+    // At one remaining life, occasionally spawn a catchable extra-life heart.
+    // Only one heart can be active at a time, and hearts cannot be shot.
+    const heartAlreadyActive = hazardsList.some(hazard => hazard.type === 'heart');
+    if (lives === 1 && !heartAlreadyActive && Math.random() < 0.18) {
+        hazardsList.push({
+            x: Math.random() * Math.max(1, arenaWidth - 40) + 20,
+            y: -20,
+            speed: 180 + Math.random() * 120 + score * 0.04,
+            type: 'heart',
+            element: createDomElement('entity', '💖')
+        });
+        return;
+    }
+
+    const isAlien = Math.random() < 0.65;
+    const itemSymbol = isAlien ? '👽' : '🌿';
+    hazardsList.push({
+        x: Math.random() * Math.max(1, arenaWidth - 40) + 20,
+        y: -20,
+        speed: 180 + Math.random() * 120 + score * 0.04,
+        type: isAlien ? 'alien' : 'bud',
+        element: createDomElement('entity', itemSymbol)
+    });
+}
+
+function engineLoop(timestamp) {
+    if (!isPlaying || isPaused) return;
+    const delta = lastFrameTime ? Math.min((timestamp - lastFrameTime) / 1000, 0.04) : 1 / 60;
+    lastFrameTime = timestamp;
+
+    if (activeKeys.ArrowLeft || touchLeft) wolfX -= playerSpeed * delta;
+    if (activeKeys.ArrowRight || touchRight) wolfX += playerSpeed * delta;
+    wolfX = Math.max(0, Math.min(wolfX, arenaWidth - wolfWidth));
+    wolfElement.style.left = `${wolfX}px`;
+
+    if (isPowerUp) {
+        powerUpTime -= delta * 60;
+        alertElement.textContent = `🔥 BLUNT POWER BLITZ: ${Math.max(0, Math.ceil(powerUpTime / 60))}s`;
+        fireCooldown -= delta;
+        if (fireCooldown <= 0) {
+            execFire();
+            fireCooldown = 0.12;
+        }
+        if (powerUpTime <= 0) {
+            isPowerUp = false;
+            alertElement.textContent = '';
+        }
+    }
+
+    for (let i = projectilesList.length - 1; i >= 0; i--) {
+        const projectile = projectilesList[i];
+        projectile.y -= projectileSpeed * delta;
+        projectile.element.style.left = `${projectile.x - 3}px`;
+        projectile.element.style.top = `${projectile.y}px`;
+        if (projectile.y < -25) {
+            projectile.element.remove();
+            projectilesList.splice(i, 1);
+        }
+    }
+
+    for (let i = hazardsList.length - 1; i >= 0; i--) {
+        const hazard = hazardsList[i];
+        hazard.y += hazard.speed * delta;
+        hazard.element.style.left = `${hazard.x}px`;
+        hazard.element.style.top = `${hazard.y}px`;
+
+        if (hazard.y > arenaHeight + 30) {
+            hazard.element.remove();
+            hazardsList.splice(i, 1);
+            continue;
+        }
+
+        let wasShot = false;
+        for (let j = projectilesList.length - 1; j >= 0; j--) {
+            const projectile = projectilesList[j];
+            if (hazard.type !== 'heart' && Math.abs(projectile.x - hazard.x) < 25 && Math.abs(projectile.y - hazard.y) < 25) {
+                score += hazard.type === 'alien' ? 20 : 5;
+                hazard.element.textContent = '💥';
+                const explosionElement = hazard.element;
+                setTimeout(() => explosionElement.remove(), 150);
+                projectile.element.remove();
+                projectilesList.splice(j, 1);
+                hazardsList.splice(i, 1);
+                updateHudDisplay();
+                wasShot = true;
+                break;
+            }
+        }
+        if (wasShot) continue;
+
+        const playerCenterX = wolfX + wolfWidth / 2;
+        const playerCenterY = arenaHeight - 65 + wolfHeight / 2;
+        if (Math.abs(hazard.x - playerCenterX) < 35 && Math.abs(hazard.y - playerCenterY) < 35) {
+            if (hazard.type === 'heart') {
+                lives++;
+                score += 5;
+                alertElement.textContent = '💖 EXTRA LIFE +5 POINTS!';
+                setTimeout(() => {
+                    if (isPlaying && !isPowerUp) alertElement.textContent = '';
+                }, 1200);
+            } else if (hazard.type === 'bud') {
+                // Catching a leaf earns 20 points, even while shielding.
+                score += 20;
+                buds++;
+                if (buds >= 5) {
+                    isPowerUp = true;
+                    powerUpTime = 300; // 5 seconds at 60 frames per second
+                    buds = 0;
+                }
+            } else if (isShielding) {
+                if (hazard.type === 'alien') hp -= 15;
+            } else if (hazard.type === 'alien') {
+                lives--;
+            }
+            hazard.element.remove();
+            hazardsList.splice(i, 1);
+            if (hp <= 0) {
+                hp = 100;
+                lives--;
+            }
+            updateHudDisplay();
+            if (lives <= 0) {
+                endGameSession();
+                return;
+            }
+        }
+    }
+    masterLoopId = requestAnimationFrame(engineLoop);
+}
+
+function updateHudDisplay() {
+    scoreElement.textContent = String(score);
+    livesElement.textContent = '❤️'.repeat(Math.max(0, lives)) || '0';
+    hpElement.textContent = `${hp}%`;
+    budsElement.textContent = `${buds}/5`;
+}
+
+function endGameSession() {
+    isPlaying = false;
+    isPaused = false;
+    pauseButton.disabled = true;
+    pauseButton.textContent = 'PAUSE';
+    pauseScreen.style.display = 'none';
+    clearInterval(spawnInterval);
+    if (masterLoopId !== null) cancelAnimationFrame(masterLoopId);
+    isShielding = false;
+    arena.classList.remove('shield-active');
+    finalScoreElement.textContent = `Final Score: ${score}`;
+    scoreEntry.style.display = score > highScoreRecord.score ? 'flex' : 'none';
+    playerNameInput.value = '';
+    scoreSaveMessage.textContent = '';
+    gameoverScreen.style.display = 'flex';
+}
+
+updateArenaSize();
+updateHighScoreDisplay();
+</script>
+</body>
+</html>
