@@ -1,0 +1,208 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WeedCloud Lounge</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="lounge-body">
+
+  <main class="lounge-page">
+
+    <header class="lounge-header">
+      <a class="lounge-back-home" href="index.html">← WEEDCLOUD</a>
+
+      <div>
+        <p class="lounge-kicker">WILDCORE WEEDCLOUD PRESENTS</p>
+        <h1>THE <span>LOUNGE</span></h1>
+        <p class="lounge-instruction">EXPLORE THE ROOM · SELECT AN AREA</p>
+      </div>
+    </header>
+
+    <section class="lounge-stage" id="lounge-stage" aria-label="Interactive WeedCloud Lounge">
+
+      <img
+        class="lounge-room-image"
+        id="lounge-room-image"
+        src="assets/lounge-room.png"
+        alt="The WeedCloud neon purple music lounge"
+        draggable="false"
+      >
+
+      <div class="lounge-hotspots" id="lounge-hotspots">
+
+        <button class="lounge-hotspot hotspot-couch" type="button"
+          data-area="couch" aria-label="Explore the couch">
+          <span>COUCH</span>
+        </button>
+
+        <button class="lounge-hotspot hotspot-shoutouts" type="button"
+          data-area="shoutouts" aria-label="Open Shout Outs">
+          <span>SHOUT OUTS</span>
+        </button>
+
+        <button class="lounge-hotspot hotspot-arcade" type="button"
+          data-area="arcade" aria-label="Open the arcade">
+          <span>ARCADE</span>
+        </button>
+
+        <button class="lounge-hotspot hotspot-stereo" type="button"
+          data-area="stereo" aria-label="Open the music player">
+          <span>STEREO / MUSIC</span>
+        </button>
+
+        <button class="lounge-hotspot hotspot-gallery" type="button"
+          data-area="gallery" aria-label="Open the production gallery">
+          <span>PRODUCTION GALLERY</span>
+        </button>
+
+        <button class="lounge-hotspot hotspot-computer" type="button"
+          data-area="computer" aria-label="View work in progress">
+          <span>WORK IN PROGRESS</span>
+        </button>
+
+        <button class="lounge-hotspot hotspot-booth" type="button"
+          data-area="booth" aria-label="Visit the recording booth">
+          <span>RECORDING BOOTH</span>
+        </button>
+
+      </div>
+
+      <section class="lounge-detail" id="lounge-detail" aria-live="polite" hidden>
+
+        <button class="lounge-detail-close" id="lounge-close"
+          type="button" aria-label="Return to the room">×</button>
+
+        <p class="lounge-detail-kicker" id="lounge-detail-kicker">
+          LOUNGE EXPERIENCE
+        </p>
+
+        <h2 id="lounge-detail-title">AREA TITLE</h2>
+
+        <p id="lounge-detail-copy">Area description.</p>
+
+        <div class="lounge-detail-note" id="lounge-detail-note"></div>
+
+        <!-- SHOUT OUTS LINK WALL: add real logos and URLs as projects go live. -->
+        <div class="lounge-link-wall" id="lounge-link-wall" hidden>
+          <div class="lounge-link-grid">
+            <article class="lounge-link-card">
+              <div class="lounge-logo-placeholder">WEEDCLOUD</div>
+              <p>MAIN PROJECT</p>
+              <span class="lounge-link-pending">LINK COMING SOON</span>
+            </article>
+            <article class="lounge-link-card">
+              <div class="lounge-logo-placeholder">WEEDWOLF</div>
+              <p>CHARACTER / PROJECT</p>
+              <span class="lounge-link-pending">LINK COMING SOON</span>
+            </article>
+            <article class="lounge-link-card">
+              <div class="lounge-logo-placeholder">GROW GUIDE</div>
+              <p>PROJECT</p>
+              <span class="lounge-link-pending">LINK COMING SOON</span>
+            </article>
+            <article class="lounge-link-card lounge-link-card-empty">
+              <div class="lounge-logo-placeholder">YOUR LOGO HERE</div>
+              <p>COLLABORATOR / RELATED SITE</p>
+              <span class="lounge-link-pending">ADD PROJECT</span>
+            </article>
+          </div>
+          <div class="lounge-tagwall-preview">
+            <strong>COMMUNITY TAG WALL</strong>
+            <p>A future space for visitor tags and shout-outs.</p>
+            <span>COMMUNITY FEATURE · PLANNED</span>
+          </div>
+        </div>
+
+        <!-- STEREO MUSIC PLAYER -->
+
+        <div class="stereo-player" id="stereo-player" hidden>
+
+          <div class="player-now-playing">
+            <span class="player-label">NOW PLAYING</span>
+            <strong id="track-name">TRACK 1</strong>
+          </div>
+
+          <audio id="lounge-audio" preload="metadata"></audio>
+
+          <div class="player-controls">
+            <button type="button" id="previous-track" aria-label="Previous track">|◀</button>
+            <button type="button" id="play-track" aria-label="Play">▶</button>
+            <button type="button" id="stop-track" aria-label="Stop">■</button>
+            <button type="button" id="next-track" aria-label="Next track">▶|</button>
+          </div>
+
+          <div class="player-progress">
+            <span id="current-time">0:00</span>
+            <input type="range" id="track-progress"
+              min="0" max="100" value="0" step="0.1"
+              aria-label="Track progress">
+            <span id="total-time">0:00</span>
+          </div>
+
+          <label class="track-select-label" for="track-select">
+            SELECT TRANSMISSION
+          </label>
+
+          <select id="track-select">
+            <option value="0">TRACK 1</option>
+            <option value="1">TRACK 2</option>
+            <option value="2">TRACK 3</option>
+            <option value="3">TRACK 4</option>
+            <option value="4">TRACK 5</option>
+            <option value="5">TRACK 6</option>
+            <option value="6">TRACK 7</option>
+            <option value="7">TRACK 8</option>
+            <option value="8">TRACK 9</option>
+          </select>
+
+          <label class="track-select-label" for="playback-mode">
+            PLAYBACK MODE
+          </label>
+
+          <select id="playback-mode">
+            <option value="sequential">STRAIGHT THROUGH</option>
+            <option value="random">RANDOM</option>
+          </select>
+
+        </div>
+        <!-- END STEREO PLAYER -->
+
+      </section>
+
+      <!-- ARCADE SCREEN MUST BE OUTSIDE THE HIDDEN DETAIL PANEL -->
+        <!-- ARCADE SELECTION SCREEN -->
+        <div class="lounge-arcade-screen" id="lounge-arcade-screen" hidden>
+          <div class="arcade-screen-heading">
+            <span>WEEDCLOUD ARCADE</span>
+            <strong>PRESS START</strong>
+          </div>
+          <div class="lounge-arcade-grid" id="lounge-arcade-grid" aria-label="Choose a game"></div>
+          <p class="arcade-screen-footer">SELECT A CABINET · MORE GAMES ADDED OVER TIME</p>
+        </div>
+
+      <button class="lounge-return" id="lounge-return" type="button" hidden>
+        ← BACK TO THE ROOM
+      </button>
+
+      <div class="lounge-status" id="lounge-status">
+        TRANSMISSION READY · SELECT A HOTSPOT
+      </div>
+
+    </section>
+
+    <nav class="lounge-footer-nav" aria-label="Site navigation">
+      <a href="index.html">WEEDCLOUD HOME</a>
+      <a href="weedwolf.html">WEEDWOLF</a>
+      <a href="grow-guide.html">GROW GUIDE</a>
+    </nav>
+
+  </main>
+
+  <script src="lounge.js"></script>
+
+</body>
+</html>
